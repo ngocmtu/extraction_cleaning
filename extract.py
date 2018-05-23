@@ -26,7 +26,10 @@ def shorten_name(original_name, current_dir):
 	yeardelim = findnth(original_name,'2F',1)
 
 	if yeardelim == -1:
-		return 'done'
+		if path.exists(current_dir+'done/'+original_name[0:-4]+'_bull.csv'):
+			return 'done'
+		else:
+			return current_dir+original_name
 	else:
 		year = original_name[yeardelim+2:yeardelim+6]
 		print('Year '+year)
