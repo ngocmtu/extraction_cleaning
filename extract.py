@@ -62,7 +62,6 @@ done = d+'done/'
 if not path.exists(done):
 	makedirs(done)
 
-
 for fr in l:
 	try:
 		fr = shorten_name(fr,d)
