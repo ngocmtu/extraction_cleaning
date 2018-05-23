@@ -132,6 +132,7 @@ for fr in l:
 
 		# remove original file after it has served its purpose
 		# remove(d+fr)
+		print('File '+fr+' is done')
 	except Exception as e:
 		print(e)
 		print('File responsible for this '+fr)
