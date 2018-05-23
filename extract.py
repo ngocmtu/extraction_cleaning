@@ -29,7 +29,7 @@ def shorten_name(original_name, current_dir):
 		if path.exists(current_dir+'done/'+original_name[0:-4]+'_bull.csv'):
 			return 'done'
 		else:
-			return current_dir+original_name
+			return original_name
 	else:
 		year = original_name[yeardelim+2:yeardelim+6]
 		print('Year '+year)
@@ -96,11 +96,33 @@ for fr in l:
 
 			# for every row in the original file
 			# write to each of the corresponding 3 files
-			for i in range(len(df)):
+			# get rid of replicates
+			for i in range(len(df)-1):
 				row = df.loc[i,:]
-				sen = row['entities_sentiment_basic']
+				next_row = df.loc[i+1,:]
 				tweet = row['object_summary']
+
+				# if the next tweet is the same as this one, move along
+				# only write one time for each unique tweet
+				if tweet == next_row['object_summary']:
+					continue
+
+				sen = row['entities_sentiment_basic']
 				time = row['object_postedTime']
+
+				if sen == 'Bullish':
+					csvwrite_bull.writerow([time,tweet,sen])
+				elif sen == 'Bearish':
+					csvwrite_bear.writerow([time,tweet,sen])
+				else:
+					csvwrite_no_sentiment.writerow([time,tweet])
+
+			second_to_last_row = df.loc[len(df)-2,:]
+			last_row = df.loc[len(df)-1,:]
+			if second_to_last_row['object_summary'] != last_row['object_summary']:
+				sen = last_row['entities_sentiment_basic']
+				time = last_row['object_postedTime']
+				tweet = last_row['object_summary']
 				if sen == 'Bullish':
 					csvwrite_bull.writerow([time,tweet,sen])
 				elif sen == 'Bearish':
@@ -110,7 +132,7 @@ for fr in l:
 
 		# remove original file after it has served its purpose
 		# remove(d+fr)
-	except Exception:
-		print(Exception)
+	except Exception as e:
+		print(e)
 		print('File responsible for this '+fr)
 		pass
