@@ -8,6 +8,7 @@ from os import rename
 from os import path
 from os import remove
 from os import makedirs
+import glob
 
 d = sys.argv[1] # input dir
 
@@ -59,15 +60,17 @@ def shorten_name(original_name, current_dir):
 # separate their contents into bull, bear, and no sentiment files
 l = listdir(d)
 done = d+'done/'
+
+# if folder done exists, proceed
+# if not create it
 if not path.exists(done):
 	makedirs(done)
 
 for fr in l:
+	fr = shorten_name(fr,d)
+	if fr == 'done':
+		continue
 	try:
-		fr = shorten_name(fr,d)
-		if fr == 'done':
-			continue
-
 		# put file into a DataFrame for further processing
 		df = pd.read_csv(d+fr)
 
@@ -135,4 +138,6 @@ for fr in l:
 	except Exception as e:
 		print(e)
 		print('File responsible for this '+fr)
+		for f in glob.glob(path.join(done,fr+'*')):
+			remove(f)
 		pass
