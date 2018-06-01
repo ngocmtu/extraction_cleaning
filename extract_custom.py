@@ -122,7 +122,7 @@ for fr in l:
 			second_to_last_row = df.loc[len(df)-2,:]
 			last_row = df.loc[len(df)-1,:]
 			if second_to_last_row['object_summary'] != last_row['object_summary']:
-				sen = last_row['entities_sentiment_basic']
+				sen = last_row['entities_sentiment']
 				time = last_row['object_postedTime']
 				tweet = last_row['object_summary']
 				if sen == 'Bullish':
