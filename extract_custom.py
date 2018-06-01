@@ -20,6 +20,41 @@ def findnth(haystack, needle, n):
 		return -1
 	return len(haystack)-len(parts[-1])-len(needle)
 
+# def shorten_name(original_name, current_dir):
+# 	#find position of year
+# 	#then get year to a var called year
+# 	#if file name's already changed, then do nothing
+# 	yeardelim = findnth(original_name,'2F',1)
+
+# 	if yeardelim == -1:
+# 		if path.exists(current_dir+'done/'+original_name[0:-4]+'_bull.csv'):
+# 			return 'done'
+# 		else:
+# 			return original_name
+# 	else:
+# 		year = original_name[yeardelim+2:yeardelim+6]
+# 		print('Year '+year)
+
+# 		# get positions of month in name
+# 		# usually between the last two '_' characters out of three '_' characters
+# 		# if there's only two, count the length of name after the last '_'
+# 		# if 17, get the first number after '_' as month
+# 		# if 18, get the two numbers after '_' as month
+# 		firstdelim = findnth(original_name,'_',2)
+# 		seconddelim = findnth(original_name,'_',3)
+
+# 		if seconddelim == -1:
+# 			if len(original_name[firstdelim:-1]) == 17:
+# 				month = original_name[firstdelim+1]
+# 			else:
+# 				month = original_name[firstdelim+1:firstdelim+3]
+# 		else:
+# 			month = original_name[firstdelim+1:seconddelim]
+
+# 		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
+# 		rename(current_dir+original_name,current_dir+new_name)
+# 		return new_name
+
 def shorten_name(original_name, current_dir):
 	#find position of year
 	#then get year to a var called year
@@ -32,26 +67,26 @@ def shorten_name(original_name, current_dir):
 		else:
 			return original_name
 	else:
-		year = original_name[yeardelim+2:yeardelim+6]
-		print('Year '+year)
+		year = original_name[0:4]
 
 		# get positions of month in name
 		# usually between the last two '_' characters out of three '_' characters
 		# if there's only two, count the length of name after the last '_'
 		# if 17, get the first number after '_' as month
 		# if 18, get the two numbers after '_' as month
-		firstdelim = findnth(original_name,'_',2)
-		seconddelim = findnth(original_name,'_',3)
+		# firstdelim = findnth(original_name,'_',2)
+		seconddelim = findnth(original_name,'_',2)
 
-		if seconddelim == -1:
-			if len(original_name[firstdelim:-1]) == 17:
-				month = original_name[firstdelim+1]
-			else:
-				month = original_name[firstdelim+1:firstdelim+3]
-		else:
-			month = original_name[firstdelim+1:seconddelim]
+		month = original_name[seconddelim:len(original_name)]
+		# if seconddelim == -1:
+		# 	if len(original_name[firstdelim:-1]) == 17:
+		# 		month = original_name[firstdelim+1]
+		# 	else:
+		# 		month = original_name[firstdelim+1:firstdelim+3]
+		# else:
+		# 	month = original_name[firstdelim+1:seconddelim]
 
-		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
+		new_name = year+'_'+month+'.csv'
 		rename(current_dir+original_name,current_dir+new_name)
 		return new_name
 
@@ -109,7 +144,7 @@ for fr in l:
 				if tweet == next_row['object_summary']:
 					continue
 
-				sen = row['entities_sentiment']
+				sen = row['entities_sentiment_basic']
 				time = row['object_postedTime']
 
 				if sen == 'Bullish':
