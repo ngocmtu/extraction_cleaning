@@ -57,7 +57,7 @@ def shorten_name(original_name, current_dir):
 # rename them to get rid of all redundant characters
 # separate their contents into bull, bear, and no sentiment files
 l = listdir(d)
-done = d+'done/'
+done = path.join(d,'done')
 
 # if folder done exists, proceed
 # if not create it
