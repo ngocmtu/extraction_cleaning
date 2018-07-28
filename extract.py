@@ -3,11 +3,7 @@
 import sys
 import csv
 import pandas as pd
-from os import listdir
-from os import rename
-from os import path
-from os import remove
-from os import makedirs
+from os import listdir, rename, path, remove, makedirs
 import glob
 
 d = sys.argv[1] # input dir
@@ -52,6 +48,8 @@ def shorten_name(original_name, current_dir):
 			month = original_name[firstdelim+1:seconddelim]
 
 		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
+		print(current_dir+original_name)
+		print(current_dir+new_name)
 		rename(current_dir+original_name,current_dir+new_name)
 		return new_name
 
