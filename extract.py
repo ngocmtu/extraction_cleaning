@@ -48,8 +48,6 @@ def shorten_name(original_name, current_dir):
 			month = original_name[firstdelim+1:seconddelim]
 
 		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
-		print(path.join(current_dir,original_name))
-		print(path.join(current_dir,new_name))
 		rename(path.join(current_dir,original_name),path.join(current_dir,new_name))
 		return new_name
 
@@ -66,11 +64,12 @@ if not path.exists(done):
 
 for fr in l:
 	fr = shorten_name(fr,d)
+	print('Shortened '+fr)
 	if fr == 'done':
 		continue
 	try:
 		# put file into a DataFrame for further processing
-		df = pd.read_csv(d+fr)
+		df = pd.read_csv(path.join(d,fr))
 
 		# get inputfile name without .csv extension
 		input_name = fr[0:-4]
