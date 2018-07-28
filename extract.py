@@ -31,25 +31,30 @@ def shorten_name(original_name, current_dir):
 		year = original_name[yeardelim+2:yeardelim+6]
 		print('Year '+year)
 
-		# get positions of month in name
-		# usually between the last two '_' characters out of three '_' characters
-		# if there's only two, count the length of name after the last '_'
-		# if 17, get the first number after '_' as month
-		# if 18, get the two numbers after '_' as month
-		firstdelim = findnth(original_name,'_',2)
-		seconddelim = findnth(original_name,'_',3)
-
-		if seconddelim == -1:
-			if len(original_name[firstdelim:-1]) == 17:
-				month = original_name[firstdelim+1]
-			else:
-				month = original_name[firstdelim+1:firstdelim+3]
+		if int(year) < 2012:
+			new_name = original_name[yeardelim+2:]
+			rename(path.join(current_dir,original_name),path.join(current_dir,new_name))
+			return new_name
 		else:
-			month = original_name[firstdelim+1:seconddelim]
+			# get positions of month in name
+			# usually between the last two '_' characters out of three '_' characters
+			# if there's only two, count the length of name after the last '_'
+			# if 17, get the first number after '_' as month
+			# if 18, get the two numbers after '_' as month
+			firstdelim = findnth(original_name,'_',2)
+			seconddelim = findnth(original_name,'_',3)
 
-		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
-		rename(path.join(current_dir,original_name),path.join(current_dir,new_name))
-		return new_name
+			if seconddelim == -1:
+				if len(original_name[firstdelim:-1]) == 17:
+					month = original_name[firstdelim+1]
+				else:
+					month = original_name[firstdelim+1:firstdelim+3]
+			else:
+				month = original_name[firstdelim+1:seconddelim]
+
+			new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
+			rename(path.join(current_dir,original_name),path.join(current_dir,new_name))
+			return new_name
 
 # loop through all files in a directory
 # rename them to get rid of all redundant characters
