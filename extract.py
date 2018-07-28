@@ -48,9 +48,9 @@ def shorten_name(original_name, current_dir):
 			month = original_name[firstdelim+1:seconddelim]
 
 		new_name = year+'_'+month+'_'+original_name[-5]+'.csv'
-		print(current_dir+original_name)
-		print(current_dir+new_name)
-		rename(current_dir+original_name,current_dir+new_name)
+		print(path.join(current_dir,original_name))
+		print(path.join(current_dir,new_name))
+		rename(path.join(current_dir,original_name),path.join(current_dir,new_name))
 		return new_name
 
 # loop through all files in a directory
