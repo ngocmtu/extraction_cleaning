@@ -5,7 +5,7 @@ import csv
 import pandas as pd
 from os import listdir,rename,path,remove,makedirs
 
-f = sys.argv[1] # full path to input file
+files_to_extract = listdir('files_to_extract') # full path to input file
 
 # method to find position of certain characters
 def findnth(haystack, needle, n):
@@ -48,73 +48,71 @@ def shorten_name(original_name):
 		rename(current_dir+original_name,current_dir+new_name)
 		return path.join(path_name,new_name)
 
-# if name already shorten, return the same name
-# if not, rename it to make it shorter
-print('Before '+f)
-fr = shorten_name(f)
-print('After '+fr)
+for f in files_to_extract:
+	# if name already shorten, return the same name
+	# if not, rename it to make it shorter
+	print('Before '+f)
+	fr = shorten_name(f)
+	print('After '+fr)
 
-# put file into a DataFrame for further processing
-df = pd.read_csv(fr)
+	# get inputfile name without .csv extension
+	input_name = f[0:-4]
 
-# get inputfile name without .csv extension
-input_name = f[0:-4]
+	# create name for the new output files
+	fwbull = input_name + '_bull.csv'
+	fwbear = input_name + '_bear.csv'
+	fwnosen = input_name + '_nosen.csv'
 
-# create name for the new output files
-fwbull = input_name + '_bull.csv'
-fwbear = input_name + '_bear.csv'
-fwnosen = input_name + '_nosen.csv'
+	# print('Information about column name')
+	# created_at_column = raw_input('Created at datetime column name\n')
+	# tweet_column = raw_input('Tweet body column name\n')
+	# sentiment_column = raw_input('Sentiment column name\n')
 
-# print('Information about column name')
-# created_at_column = raw_input('Created at datetime column name\n')
-# tweet_column = raw_input('Tweet body column name\n')
-# sentiment_column = raw_input('Sentiment column name\n')
+	# read file and write to corresponding bull or bear file
+	# if no sentiment attached, write to a file that's empty
+	with open(path.join('extracted_files',fwbull),'w+') as write_bull, open(path.join('extracted_files',fwbear), 'w+') as write_bear, open(path.join('extracted_files',fwnosen), 'w+') as write_no_sentiment, open(path.join('files_to_extract',f),'r+') as read_file:
+		# create csvwriter to write in csv format to output files
+		csvwrite_bull = csv.writer(write_bull,dialect='excel')
+		csvwrite_bear = csv.writer(write_bear,dialect='excel')
+		csvwrite_no_sentiment = csv.writer(write_no_sentiment,dialect='excel')
+		reader = csv.DictReader(read_file)
 
-# read file and write to corresponding bull or bear file
-# if no sentiment attached, write to a file that's empty
-with open(fwbull,'w+') as write_bull, open(fwbear, 'w+') as write_bear, open(fwnosen, 'w+') as write_no_sentiment, open(f,'r+') as read_file:
-	# create csvwriter to write in csv format to output files
-	csvwrite_bull = csv.writer(write_bull,dialect='excel')
-	csvwrite_bear = csv.writer(write_bear,dialect='excel')
-	csvwrite_no_sentiment = csv.writer(write_no_sentiment,dialect='excel')
-	reader = csv.DictReader(read_file)
+		# write column names
+		# no_sentiment file does not have sentiment so it does not have that column
+		csvwrite_bull.writerow(['created_at','tweet', 'sentiment'])
+		csvwrite_bear.writerow(['created_at','tweet', 'sentiment'])
+		csvwrite_no_sentiment.writerow(['created_at','tweet'])
 
-	# write column names
-	# no_sentiment file does not have sentiment so it does not have that column
-	csvwrite_bull.writerow(['created_at','tweet', 'sentiment'])
-	csvwrite_bear.writerow(['created_at','tweet', 'sentiment'])
-	csvwrite_no_sentiment.writerow(['created_at','tweet'])
-
-	# get header info
-	# files before 2011 has different header names
-	headers = reader.
-	if 'object_summary' in headers:
-		tweet_column = 'object_summary'
-	else:
-		tweet_column = 'body'
-	if 'entities_sentiment' in headers:
-		sentiment_column = 'entities_sentiment'
-	else:
-		sentiment_column = 'entities_sentiment_basic'
-	created_at_column = 'object_postedTime'
-
-	current_tweet = ''
-
-	for line in reader:
-		tweet = line[tweet_column]
-
-		if current_tweet != tweet or current_tweet == '':
-			current_tweet = tweet
-			sentiment = line[sentiment_column]
-			created_at = line[created_at_column]
-
-			if sentiment == 'Bullish':
-				csvwrite_bull.writerow([created_at,tweet,sentiment])
-			elif sentiment == 'Bearish':
-				csvwrite_bear.writerow([created_at,tweet,sentiment])
-			else:
-				csvwrite_no_sentiment.writerow([created_at,tweet])
+		# get header info
+		# files before 2011 has different header names
+		headers = reader.fieldnames
+		if 'object_summary' in headers:
+			tweet_column = 'object_summary'
 		else:
-			continue
+			tweet_column = 'body'
+		if 'entities_sentiment' in headers:
+			sentiment_column = 'entities_sentiment'
+		else:
+			sentiment_column = 'entities_sentiment_basic'
+		created_at_column = 'object_postedTime'
 
-	print('Done')
+		current_tweet = ''
+
+		for line in reader:
+			tweet = line[tweet_column]
+
+			if current_tweet != tweet or current_tweet == '':
+				current_tweet = tweet
+				sentiment = line[sentiment_column]
+				created_at = line[created_at_column]
+
+				if sentiment == 'Bullish':
+					csvwrite_bull.writerow([created_at,tweet,sentiment])
+				elif sentiment == 'Bearish':
+					csvwrite_bear.writerow([created_at,tweet,sentiment])
+				else:
+					csvwrite_no_sentiment.writerow([created_at,tweet])
+			else:
+				continue
+
+print('Done')
