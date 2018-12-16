@@ -40,6 +40,10 @@ def shorten_name(original_name):
 			new_name = original_name[yeardelim+2:]
 			rename(path.join('files_to_extract',original_name),path.join('files_to_extract',new_name))
 			return new_name
+		elif '2009' in original_name:
+			new_name = original_name[yeardelim+2:]
+			rename(path.join('files_to_extract',original_name),path.join('files_to_extract',new_name))
+			return new_name
 		else:
 			year = original_name[yeardelim+2:yeardelim+6]
 			print('Year '+year)
