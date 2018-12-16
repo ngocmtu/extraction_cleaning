@@ -80,14 +80,9 @@ for f in files_to_extract:
 	fwbear = input_name + '_bear.csv'
 	fwnosen = input_name + '_nosen.csv'
 
-	# print('Information about column name')
-	# created_at_column = raw_input('Created at datetime column name\n')
-	# tweet_column = raw_input('Tweet body column name\n')
-	# sentiment_column = raw_input('Sentiment column name\n')
-
 	# read file and write to corresponding bull or bear file
 	# if no sentiment attached, write to a file that's empty
-	with open(path.join('extracted_files',fwbull),'w+') as write_bull, open(path.join('extracted_files',fwbear), 'w+') as write_bear, open(path.join('extracted_files',fwnosen), 'w+') as write_no_sentiment, open(path.join('files_to_extract',f),'r+') as read_file:
+	with open(path.join('bull_extracted',fwbull),'w+') as write_bull, open(path.join('bear_extracted',fwbear), 'w+') as write_bear, open(path.join('nosen_extracted',fwnosen), 'w+') as write_no_sentiment, open(path.join('files_to_extract',f),'r+') as read_file:
 		# create csvwriter to write in csv format to output files
 		csvwrite_bull = csv.writer(write_bull,dialect='excel')
 		csvwrite_bear = csv.writer(write_bear,dialect='excel')
