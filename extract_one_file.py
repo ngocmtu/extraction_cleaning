@@ -65,6 +65,8 @@ def shorten_name(original_name):
 			return new_name
 
 for f in files_to_extract:
+	if f == '.keep':
+		continue
 	# if name already shorten, return the same name
 	# if not, rename it to make it shorter
 	print('Before '+f)
