@@ -13,7 +13,6 @@
 
 import sys
 import csv
-import pandas as pd
 from os import listdir,rename,path,remove,makedirs
 
 files_to_extract = listdir('files_to_extract') # full path to input file
