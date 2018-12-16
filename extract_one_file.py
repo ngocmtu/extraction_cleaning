@@ -9,7 +9,7 @@
 # At the point of writing comment, not implementing yet because
 # did not have enough data on file names of year 14,15,16 to change the logic
 #
-# Currently piloting on 08 files
+# Currently piloting on 08,09 files
 
 import sys
 import csv
@@ -35,7 +35,7 @@ def shorten_name(original_name):
 	if yeardelim == -1:
 		return path.join(path_name,original_name)
 	else:
-		if '2008' in original_name:
+		if '2008' or '2009' in original_name:
 			yeardelim = findnth(original_name,'2F',2)
 			new_name = original_name[yeardelim+2:]
 			rename(path.join('files_to_extract',original_name),path.join('files_to_extract',new_name))
