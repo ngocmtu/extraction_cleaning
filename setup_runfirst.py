@@ -4,7 +4,7 @@
 # ensure all modules are actually installed
 # not the current priority
 
-#import pip
+import getpip
 from os import path, listdir, makedirs
 
 # def import_or_install(package):
@@ -13,6 +13,7 @@ from os import path, listdir, makedirs
 #     except ImportError:
 #         pip.main(['install', package])
 
+getpip.main()
 if not path.exists('nosen_extracted'):
 	makedirs('nosen_extracted')
 if not path.exists('bull_extracted'):

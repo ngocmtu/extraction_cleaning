@@ -1,28 +1,9 @@
 #!/usr/bin/env python
-
-# TODO
-# Revise function shorten_name:
-# instead of the current logic
-# break the full name into two parts: the part after '2F' and the other one
-# then break the part after '2F' into year and month
-#
-# At the point of writing comment, not implementing yet because
-# did not have enough data on file names of year 14,15,16 to change the logic
-#
-# Currently piloting on 08,09 files
+# Input and output folders are input on command line
 
 import sys
 import csv
-from nltk.tokenize import word_tokenize
 from os import listdir,rename,path,remove,makedirs
-
-###################################################################
-# VARIABLE INITIALIZATION
-###################################################################
-
-files_to_extract = listdir('files_to_extract') # full path to input file
-stock_tickers = [line.rstrip('\n\r') for line in open('tick2015.csv')]
-stock_tickers = [tick.lower() for tick in stock_tickers]
 
 # method to find position of certain characters
 def findnth(haystack, needle, n):
@@ -75,27 +56,25 @@ def shorten_name(original_name):
 			rename(path.join('files_to_extract',original_name),path.join('files_to_extract',new_name))
 			return new_name
 
-# only include only twits that mention stocks
-# everything is not included
-def filter_stock(words):
-	return_words = []
-	for index,word in enumerate(words):
-		if words[index-1] == '$' and word.isalpha() and not word in stock_tickers:
-			return None
-		else:
-			return_words.append(word)
-	return return_words
+# get the input and output destinations from user
+input_path = raw_input('Please enter the input folder\n')
+output_path = raw_input('Please enter output folder\n')
 
-# input: tweet ('$AAPL and $FB are rocketing!')
-# output: a list of tickers from the tweet (['$AAPL','$FB'])
-def get_ticker(tweet):
-	words = tweet.split()
-	return [word.upper() for word in words if word[0] == '$' and word[1:].lower() in stock_tickers]
+bear_path = path.join(output_path,'bear_extracted')
+bull_path = path.join(output_path,'bull_extracted')
+nosen_path = path.join(output_path,'nosen_extracted')
 
-###################################################################
-# MAIN PROGRAM
-###################################################################
+if not path.exists(nosen_path):
+	makedirs(nosen_path)
+if not path.exists(bull_path):
+	makedirs(bull_path)
+if not path.exists(bear_path):
+	makedirs(bear_path)
 
+# begin extraction of all files in input folder
+print('input_path: '+input_path)
+# line below throws error; refer to this resource: https://stackoverflow.com/questions/15725273/python-oserror-errno-2-no-such-file-or-directory
+files_to_extract = listdir(input_path) # full path to input file
 for f in files_to_extract:
 	if f == '.keep':
 		continue
@@ -115,7 +94,7 @@ for f in files_to_extract:
 
 	# read file and write to corresponding bull or bear file
 	# if no sentiment attached, write to a file that's empty
-	with open(path.join('bull_extracted',fwbull),'w+') as write_bull, open(path.join('bear_extracted',fwbear), 'w+') as write_bear, open(path.join('nosen_extracted',fwnosen), 'w+') as write_no_sentiment, open(path.join('files_to_extract',f),'r+') as read_file:
+	with open(path.join(bull_path,fwbull),'w+') as write_bull, open(path.join(bear_path,fwbear), 'w+') as write_bear, open(path.join(nosen_path,fwnosen), 'w+') as write_no_sentiment, open(path.join(input_path,f),'r+') as read_file:
 		# create csvwriter to write in csv format to output files
 		csvwrite_bull = csv.writer(write_bull,dialect='excel')
 		csvwrite_bear = csv.writer(write_bear,dialect='excel')
@@ -124,9 +103,9 @@ for f in files_to_extract:
 
 		# write column names
 		# no_sentiment file does not have sentiment so it does not have that column
-		csvwrite_bull.writerow(['created_at','tweet', 'sentiment','tickers'])
-		csvwrite_bear.writerow(['created_at','tweet', 'sentiment','tickers'])
-		csvwrite_no_sentiment.writerow(['created_at','tweet','tickers'])
+		csvwrite_bull.writerow(['created_at','tweet', 'sentiment'])
+		csvwrite_bear.writerow(['created_at','tweet', 'sentiment'])
+		csvwrite_no_sentiment.writerow(['created_at','tweet'])
 
 		# get header info
 		# files before 2011 has different header names
@@ -148,20 +127,15 @@ for f in files_to_extract:
 
 			if current_tweet != tweet or current_tweet == '':
 				current_tweet = tweet
-				tweet_has_stock_ticker_or_not = filter_stock(word_tokenize(tweet.lower()))
-				if tweet_has_stock_ticker_or_not is not None:
-					tickers_in_tweet = get_ticker(tweet)
-					sentiment = line[sentiment_column]
-					created_at = line[created_at_column]
+				sentiment = line[sentiment_column]
+				created_at = line[created_at_column]
 
-					if sentiment == 'Bullish':
-						csvwrite_bull.writerow([created_at,tweet,sentiment,tickers_in_tweet])
-					elif sentiment == 'Bearish':
-						csvwrite_bear.writerow([created_at,tweet,sentiment,tickers_in_tweet])
-					else:
-						csvwrite_no_sentiment.writerow([created_at,tweet,tickers_in_tweet])
+				if sentiment == 'Bullish':
+					csvwrite_bull.writerow([created_at,tweet,sentiment])
+				elif sentiment == 'Bearish':
+					csvwrite_bear.writerow([created_at,tweet,sentiment])
 				else:
-					continue
+					csvwrite_no_sentiment.writerow([created_at,tweet])
 			else:
 				continue
 
